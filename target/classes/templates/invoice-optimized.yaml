@@ -1,0 +1,30 @@
+sections:
+  - sectionId: invoice-form
+    type: ACROFORM
+    templatePath: templates/forms/applicant-form.pdf
+    # Multiple mapping groups - optimized for performance
+    # Use DIRECT for simple fields (fastest ~0.5ms)
+    # Use JSONATA for calculations and transformations (~2.5ms)
+    fieldMappingGroups:
+      # Group 1: Simple direct mappings (fast)
+      - mappingType: DIRECT
+        fields:
+          customerName: customer.name
+          customerEmail: customer.email
+          customerAddress: customer.address
+          invoiceDate: invoiceDate
+          invoiceNumber: invoiceNumber
+      
+      # Group 2: Calculations and transformations (powerful)
+      - mappingType: JSONATA
+        fields:
+          # Calculate subtotal
+          subtotal: "$sum(items.price)"
+          # Calculate tax (10%)
+          tax: "$sum(items.price) * 0.10"
+          # Calculate grand total
+          total: "$sum(items.price) * 1.10"
+          # Count items
+          itemCount: "$count(items)"
+          # Get first item details
+          firstItem: "items[0].name & ' - $' & $string(items[0].price)"

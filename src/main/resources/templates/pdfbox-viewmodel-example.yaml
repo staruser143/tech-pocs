@@ -1,0 +1,7 @@
+templateId: pdfbox-viewmodel-example
+sections:
+  - sectionId: summary-section
+    type: PDFBOX_COMPONENT
+    templatePath: invoiceSummaryComponent
+    viewModelType: InvoiceViewModel
+    order: 1

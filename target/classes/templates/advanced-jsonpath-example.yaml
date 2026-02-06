@@ -1,0 +1,44 @@
+templateId: advanced-jsonpath-example
+sections:
+  - sectionId: employee-data
+    type: ACROFORM
+    order: 1
+    templatePath: templates/forms/employee-form.pdf
+    
+    # JSONPATH mapping strategy for complex queries
+    mappingType: JSONPATH
+    
+    fieldMappings:
+      # Simple access
+      employeeName: $.employee.fullName
+      department: $.employee.department.name
+      
+      # Array indexing - first project
+      currentProject: $.employee.projects[0].name
+      
+      # Array slicing - first 3 skills
+      topSkills: $.employee.skills[0:3].name
+      
+      # Wildcard - all skill names (returns array, will be comma-separated)
+      allSkills: $.employee.skills[*].name
+      
+      # Filter expression - projects that are active
+      activeProjects: $.employee.projects[?(@.status == 'Active')].name
+      
+      # Filter with comparison - high-value projects (budget > 100000)
+      majorProjects: $.employee.projects[?(@.budget > 100000)].name
+      
+      # Filter with contains
+      javaProjects: $.employee.projects[?(@.name =~ /.*Java.*/i)].name
+      
+      # Deep scan - find all authors at any level
+      allAuthors: $..author
+      
+      # Combined filters - senior employees with salary > 100000
+      seniorHighEarners: $.employees[?(@.yearsOfService > 5 && @.salary > 100000)].name
+      
+      # Multiple conditions with OR
+      techOrManagers: $.employees[?(@.department == 'Engineering' || @.department == 'Management')].name
+      
+      # Nested filters
+      expertJavaDevs: $.employees[?(@.skills[?(@.name == 'Java' && @.level == 'Expert')])].fullName

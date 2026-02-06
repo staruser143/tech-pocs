@@ -1,0 +1,75 @@
+# Child Applicant Addendum Template
+# Used for overflow children (beyond the first 3)
+
+templateId: child-addendum
+
+sections:
+  - sectionId: "child_addendum_section"
+    type: ACROFORM
+    templatePath: "templates/forms/applicant-form.pdf"
+    
+    fieldMappingGroups:
+      
+      # Page header info
+      - mappingType: DIRECT
+        fields:
+          pageTitle: "metadata.planType"
+          addendumDate: "metadata.enrollmentDate"
+      
+      # Overflow page indicators
+      - mappingType: CUSTOM
+        fields:
+          pageHeader: "identity:'CHILD APPLICANT ADDENDUM'"
+          overflowNote: "identity:'This addendum contains additional child applicants that did not fit on the main enrollment form.'"
+      
+      # Overflow children - up to 5 per page
+      # These map to the "children" array in overflow page data
+      - mappingType: JSONPATH
+        basePath: "children"  # Note: different from main form's "applicants"
+        fields:
+          # Child 1 (4th overall)
+          overflow_child1_firstName: "[0].demographic.firstName"
+          overflow_child1_lastName: "[0].demographic.lastName"
+          overflow_child1_DOB: "[0].demographic.dateOfBirth"
+          overflow_child1_gender: "[0].demographic.gender"
+          overflow_child1_SSN: "[0].demographic.ssn"
+          
+          # Child 2 (5th overall)
+          overflow_child2_firstName: "[1].demographic.firstName"
+          overflow_child2_lastName: "[1].demographic.lastName"
+          overflow_child2_DOB: "[1].demographic.dateOfBirth"
+          overflow_child2_gender: "[1].demographic.gender"
+          overflow_child2_SSN: "[1].demographic.ssn"
+          
+          # Child 3 (6th overall)
+          overflow_child3_firstName: "[2].demographic.firstName"
+          overflow_child3_lastName: "[2].demographic.lastName"
+          overflow_child3_DOB: "[2].demographic.dateOfBirth"
+          overflow_child3_gender: "[2].demographic.gender"
+          overflow_child3_SSN: "[2].demographic.ssn"
+          
+          # Child 4 (7th overall)
+          overflow_child4_firstName: "[3].demographic.firstName"
+          overflow_child4_lastName: "[3].demographic.lastName"
+          overflow_child4_DOB: "[3].demographic.dateOfBirth"
+          overflow_child4_gender: "[3].demographic.gender"
+          overflow_child4_SSN: "[3].demographic.ssn"
+          
+          # Child 5 (8th overall)
+          overflow_child5_firstName: "[4].demographic.firstName"
+          overflow_child5_lastName: "[4].demographic.lastName"
+          overflow_child5_DOB: "[4].demographic.dateOfBirth"
+          overflow_child5_gender: "[4].demographic.gender"
+          overflow_child5_SSN: "[4].demographic.ssn"
+      
+      # Optional: Format transformations for addendum
+      - mappingType: CUSTOM
+        fields:
+          # Format dates
+          overflow_child1_DOB_formatted: "formatDate:children[0].demographic.dateOfBirth,MM/dd/yyyy"
+          overflow_child2_DOB_formatted: "formatDate:children[1].demographic.dateOfBirth,MM/dd/yyyy"
+          overflow_child3_DOB_formatted: "formatDate:children[2].demographic.dateOfBirth,MM/dd/yyyy"
+          
+          # Mask SSNs
+          overflow_child1_SSN_masked: "jsonata:children[0].demographic.ssn ? '***-**-' & $substring(children[0].demographic.ssn, 7) : ''"
+          overflow_child2_SSN_masked: "jsonata:children[1].demographic.ssn ? '***-**-' & $substring(children[1].demographic.ssn, 7) : ''"

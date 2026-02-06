@@ -1,0 +1,35 @@
+sections:
+  - sectionId: enrollment-form
+    type: ACROFORM
+    templatePath: templates/forms/applicant-form.pdf
+    
+    fieldMappingGroups:
+      # Group 1: Simple fields
+      - mappingType: DIRECT
+        fields:
+          applicationId: application.applicationId
+          applicationDate: application.applicationDate
+          applicationStatus: application.status
+      
+      # Group 2: PRIMARY applicant
+      - mappingType: JSONPATH
+        basePath: "application.applicants[type='PRIMARY']"
+        fields:
+          primaryFirstName: "demographic.firstName"
+          primaryLastName: "demographic.lastName"
+          primaryDOB: "demographic.dateOfBirth"
+      
+      # Group 3: ALL CHILDREN - using the new REPEATING GROUP feature!
+      # This replaces 12+ lines of manual mapping with a single template
+      - mappingType: JSONPATH
+        basePath: "application.applicants[type='CHILD']"
+        repeatingGroup:
+          prefix: "child"
+          startIndex: 1
+          indexSeparator: "."
+          indexPosition: AFTER_FIELD
+          fields:
+            FirstName: "demographic.firstName"
+            LastName: "demographic.lastName"
+            DOB: "demographic.dateOfBirth"
+            Gender: "demographic.gender"

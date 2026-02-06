@@ -1,0 +1,54 @@
+templateId: templates/enrollment-with-overflow.yaml
+description: Enrollment application with automated overflow handling for children and prior coverages
+sections:
+  - sectionId: main-form
+    type: ACROFORM
+    templatePath: templates/forms/applicant-form.pdf
+    order: 1
+    fieldMappingGroups:
+      - mappingType: DIRECT
+        fields:
+          applicationId: application.applicationId
+          primaryFirstName: application.primaryFirstName
+          primaryLastName: application.primaryLastName
+      
+      - mappingType: JSONPATH
+        basePath: "application.applicants[type='CHILD']"
+        repeatingGroup:
+          prefix: "child"
+          startIndex: 1
+          indexSeparator: "."
+          indexPosition: AFTER_FIELD
+          maxItems: 3
+          fields:
+            FirstName: "demographic.firstName"
+            LastName: "demographic.lastName"
+            DOB: "demographic.dateOfBirth"
+    
+    overflowConfigs:
+      # Rule 1: Children overflow (if > 3)
+      - arrayPath: "application.applicants[type='CHILD']"
+        mappingType: JSONPATH
+        maxItemsInMain: 3
+        itemsPerOverflowPage: 5
+        addendumTemplatePath: templates/child-addendum.ftl
+
+      # Rule 2: Prior Coverage overflow (Simplified for demo)
+      # We'll just take all prior coverages from all applicants
+      - arrayPath: "$.application.applicants[*].priorCoverages[*]"
+        mappingType: JSONPATH
+        maxItemsInMain: 1
+        itemsPerOverflowPage: 10
+        addendumTemplatePath: templates/prior-coverage-addendum.ftl
+
+headerFooterConfig:
+  headers:
+    - renderType: PDFBOX
+      content: "ENROLLMENT APPLICATION - CONFIDENTIAL"
+      alignment: "CENTER"
+      marginTop: 20
+  footers:
+    - renderType: PDFBOX
+      content: "Page {page} of {total}"
+      alignment: "RIGHT"
+      marginBottom: 20

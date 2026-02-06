@@ -1,0 +1,6 @@
+templateId: templates/freemarker-example.yaml
+sections:
+  - sectionId: invoice-header
+    type: FREEMARKER
+    templatePath: templates/invoice.ftl
+    order: 1

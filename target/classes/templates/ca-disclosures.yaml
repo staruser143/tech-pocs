@@ -1,0 +1,7 @@
+templateId: ca-disclosures
+sections:
+  - sectionId: ca-legal-notice
+    type: FREEMARKER
+    templatePath: templates/ca-legal-notice.ftl
+    order: 90
+    condition: "$.application.state == 'CA'"

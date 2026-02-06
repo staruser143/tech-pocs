@@ -1,0 +1,8 @@
+templateId: invoice-with-viewmodel
+description: Invoice template using ViewModel pattern
+sections:
+  - sectionId: invoice-header
+    type: FREEMARKER
+    order: 1
+    templatePath: templates/invoice-viewmodel.ftl
+    viewModelType: InvoiceViewModel

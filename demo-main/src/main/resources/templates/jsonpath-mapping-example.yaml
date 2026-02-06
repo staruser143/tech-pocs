@@ -1,0 +1,19 @@
+templateId: jsonpath-mapping-example
+sections:
+  - sectionId: applicant-info
+    type: ACROFORM
+    order: 1
+    templatePath: templates/forms/applicant-form.pdf
+    
+    # JSONPATH mapping strategy - uses JSONPath expressions
+    mappingType: JSONPATH
+    
+    # Field mappings use JSONPath syntax with $ prefix
+    # Supports filters, wildcards, and complex queries
+    fieldMappings:
+      firstName: $.applicant.firstName
+      lastName: $.applicant.lastName
+      ssn: $.applicant.ssn
+      dateOfBirth: $.applicant.dateOfBirth
+      email: $.applicant.contact.email
+      phone: $.applicant.contact.phone

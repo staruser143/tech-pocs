@@ -1,0 +1,7 @@
+templateId: vertical-headers-demo
+description: "Example of vertical column headers in FreeMarker"
+sections:
+  - sectionId: main
+    type: FREEMARKER
+    templatePath: templates/vertical-headers-demo.ftl
+    order: 1

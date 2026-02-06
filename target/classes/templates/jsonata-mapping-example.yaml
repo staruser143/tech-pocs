@@ -1,0 +1,27 @@
+templateId: jsonata-mapping-example
+sections:
+  - sectionId: applicant-info
+    type: ACROFORM
+    order: 1
+    templatePath: templates/forms/applicant-form.pdf
+    
+    # JSONATA mapping strategy - uses JSONata transformation expressions
+    mappingType: JSONATA
+    
+    # Field mappings use JSONata syntax for transformations
+    # Supports string concatenation, calculations, conditionals, etc.
+    fieldMappings:
+      # Simple field access
+      firstName: applicant.firstName
+      lastName: applicant.lastName
+      
+      # Concatenation: firstName + " " + lastName
+      fullName: applicant.firstName & ' ' & applicant.lastName
+      
+      # Simple value
+      ssn: applicant.ssn
+      dateOfBirth: applicant.dateOfBirth
+      
+      # Nested access
+      email: applicant.contact.email
+      phone: applicant.contact.phone

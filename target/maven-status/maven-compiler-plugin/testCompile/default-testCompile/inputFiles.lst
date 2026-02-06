@@ -1,0 +1,5 @@
+/workspaces/tech-pocs/src/test/java/com/example/demo/docgen/controller/DocumentControllerIntegrationTest.java
+/workspaces/tech-pocs/src/test/java/com/example/demo/docgen/mapper/CustomMappingStrategyTest.java
+/workspaces/tech-pocs/src/test/java/com/example/demo/docgen/renderer/AcroFormRendererTest.java
+/workspaces/tech-pocs/src/test/java/com/example/demo/docgen/service/DocumentComposerTest.java
+/workspaces/tech-pocs/src/test/java/com/example/demo/docgen/service/TemplateLoaderTest.java

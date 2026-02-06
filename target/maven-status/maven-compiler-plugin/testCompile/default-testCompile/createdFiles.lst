@@ -1,0 +1,5 @@
+com/example/demo/docgen/mapper/CustomMappingStrategyTest.class
+com/example/demo/docgen/service/DocumentComposerTest.class
+com/example/demo/docgen/service/TemplateLoaderTest.class
+com/example/demo/docgen/renderer/AcroFormRendererTest.class
+com/example/demo/docgen/controller/DocumentControllerIntegrationTest.class

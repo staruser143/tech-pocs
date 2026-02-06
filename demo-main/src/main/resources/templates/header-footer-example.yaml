@@ -1,0 +1,38 @@
+templateId: templates/header-footer-example.yaml
+sections:
+  - sectionId: header-section
+    type: PDFBOX_COMPONENT
+    templatePath: simpleTextComponent
+    fieldMappings:
+      text: "This is a PDFBox Component Section"
+      x: "50"
+      y: "700"
+  
+  - sectionId: form-section
+    type: ACROFORM
+    templatePath: templates/forms/applicant-form.pdf
+    fieldMappingGroups:
+      - mappingType: DIRECT
+        fields:
+          applicationId: application.applicationId
+          primaryFirstName: application.primaryFirstName
+
+headerFooterConfig:
+  headers:
+    - renderType: FREEMARKER
+      content: |
+        Generated on: ${.now?string["yyyy-MM-dd HH:mm:ss"]}
+        Application ID: ${application.applicationId}
+      alignment: "LEFT"
+      marginTop: 30
+    - renderType: FREEMARKER
+      content: "Campaign ID: ${application.campaignId!\"N/A\"}"
+      alignment: "RIGHT"
+      marginTop: 30
+  footers:
+    - renderType: PDFBOX
+      content: "© 2026 Example Corp"
+      alignment: "LEFT"
+      marginBottom: 30
+      includePageNumbers: true
+      pageNumberFormat: "Page {page} of {total}"

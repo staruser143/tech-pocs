@@ -1,0 +1,116 @@
+sections:
+  - sectionId: enrollment-form-with-transformations
+    type: ACROFORM
+    templatePath: templates/forms/applicant-form.pdf
+    
+    # PERFORMANCE-OPTIMIZED: Mix strategies based on complexity
+    fieldMappingGroups:
+      
+      # Group 1: Simple fields - no transformation needed (DIRECT is fastest)
+      - mappingType: DIRECT
+        fields:
+          applicationId: applicationId
+          rawEmail: applicants.0.demographic.email
+      
+      # Group 2: Fields needing transformations (use JSONATA)
+      - mappingType: JSONATA
+        basePath: "applicants[type='PRIMARY']"
+        fields:
+          # ============================================
+          # TEXT CASE CONVERSIONS
+          # ============================================
+          firstNameUpper: "$uppercase(demographic.firstName)"
+          lastNameUpper: "$uppercase(demographic.lastName)"
+          firstNameLower: "$lowercase(demographic.firstName)"
+          
+          # Title case (capitalize first letter)
+          firstNameTitle: "$uppercase($substring(demographic.firstName, 0, 1)) & $lowercase($substring(demographic.firstName, 1))"
+          
+          # ============================================
+          # FIELD CONCATENATION
+          # ============================================
+          # Full name
+          fullName: "demographic.firstName & ' ' & demographic.lastName"
+          
+          # Full name with middle initial
+          fullNameWithMiddle: "demographic.firstName & ' ' & $substring(demographic.middleName, 0, 1) & '. ' & demographic.lastName"
+          
+          # Address one-liner
+          fullAddress: "demographic.addresses[type='HOME'].street & ', ' & demographic.addresses[type='HOME'].city & ', ' & demographic.addresses[type='HOME'].state & ' ' & demographic.addresses[type='HOME'].zipCode"
+          
+          # ============================================
+          # SSN MASKING
+          # ============================================
+          # Mask SSN: 123-45-6789 → ***-**-6789
+          ssnMasked: "'***-**-' & $substring(demographic.ssn, -4)"
+          
+          # Fully masked: 123-45-6789 → XXX-XX-XXXX
+          ssnFullyMasked: "'XXX-XX-XXXX'"
+          
+          # Partial mask: 123-45-6789 → 1XX-XX-6789
+          ssnPartialMask: "$substring(demographic.ssn, 0, 1) & 'XX-XX-' & $substring(demographic.ssn, -4)"
+          
+          # ============================================
+          # DATE FORMATTING & SPLITTING
+          # ============================================
+          # Original: 1985-06-15
+          dobOriginal: "demographic.dateOfBirth"
+          
+          # Extract year: 1985
+          dobYear: "$substring(demographic.dateOfBirth, 0, 4)"
+          
+          # Extract month: 06
+          dobMonth: "$substring(demographic.dateOfBirth, 5, 2)"
+          
+          # Extract day: 15
+          dobDay: "$substring(demographic.dateOfBirth, 8, 2)"
+          
+          # Format as MM/DD/YYYY: 06/15/1985
+          dobFormatted: "$substring(demographic.dateOfBirth, 5, 2) & '/' & $substring(demographic.dateOfBirth, 8, 2) & '/' & $substring(demographic.dateOfBirth, 0, 4)"
+          
+          # Format as Month DD, YYYY: June 15, 1985
+          dobLongFormat: "($substring(demographic.dateOfBirth, 5, 2) = '01' ? 'January' : $substring(demographic.dateOfBirth, 5, 2) = '02' ? 'February' : $substring(demographic.dateOfBirth, 5, 2) = '03' ? 'March' : $substring(demographic.dateOfBirth, 5, 2) = '04' ? 'April' : $substring(demographic.dateOfBirth, 5, 2) = '05' ? 'May' : $substring(demographic.dateOfBirth, 5, 2) = '06' ? 'June' : $substring(demographic.dateOfBirth, 5, 2) = '07' ? 'July' : $substring(demographic.dateOfBirth, 5, 2) = '08' ? 'August' : $substring(demographic.dateOfBirth, 5, 2) = '09' ? 'September' : $substring(demographic.dateOfBirth, 5, 2) = '10' ? 'October' : $substring(demographic.dateOfBirth, 5, 2) = '11' ? 'November' : 'December') & ' ' & $substring(demographic.dateOfBirth, 8, 2) & ', ' & $substring(demographic.dateOfBirth, 0, 4)"
+          
+          # ============================================
+          # PHONE NUMBER FORMATTING
+          # ============================================
+          # Assuming input: (555) 123-4567
+          phoneFormatted: "demographic.phone"
+          
+          # Remove formatting: 5551234567
+          phoneDigitsOnly: "$replace(demographic.phone, /[^0-9]/g, '')"
+          
+          # Custom format: 555.123.4567
+          phoneCustomFormat: "$substring(demographic.phone, 1, 3) & '.' & $substring(demographic.phone, 6, 3) & '.' & $substring(demographic.phone, 10, 4)"
+          
+          # ============================================
+          # EMAIL TRANSFORMATIONS
+          # ============================================
+          emailLower: "$lowercase(demographic.email)"
+          
+          # Extract domain: email.com
+          emailDomain: "$substringAfter(demographic.email, '@')"
+          
+          # Mask email: j***@email.com
+          emailMasked: "$substring(demographic.email, 0, 1) & '***@' & $substringAfter(demographic.email, '@')"
+          
+          # ============================================
+          # CONDITIONAL TRANSFORMATIONS
+          # ============================================
+          # Gender display: M → Male, F → Female
+          genderFull: "demographic.gender = 'Male' ? 'M' : demographic.gender = 'Female' ? 'F' : 'O'"
+          
+          # Age calculation (simplified - just year difference)
+          ageApprox: "$string(2024 - $number($substring(demographic.dateOfBirth, 0, 4)))"
+          
+          # Status indicator
+          isAdult: "$number($substring(demographic.dateOfBirth, 0, 4)) <= 2006 ? 'Adult' : 'Minor'"
+          
+          # ============================================
+          # MULTIPLE FIELD COMBINATIONS
+          # ============================================
+          # Contact info block
+          contactBlock: "demographic.phone & ' | ' & demographic.email"
+          
+          # Full identity line
+          identityLine: "demographic.firstName & ' ' & demographic.lastName & ' (DOB: ' & $substring(demographic.dateOfBirth, 5, 2) & '/' & $substring(demographic.dateOfBirth, 8, 2) & '/' & $substring(demographic.dateOfBirth, 0, 4) & ')'"

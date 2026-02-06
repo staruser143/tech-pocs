@@ -1,0 +1,8 @@
+templateId: plans-summary
+description: Summary of member plan selections across Medical, Dental, and Vision
+sections:
+  - sectionId: main-summary
+    type: FREEMARKER
+    order: 1
+    templatePath: templates/plans-summary.ftl
+    viewModelType: MemberPlanViewModel

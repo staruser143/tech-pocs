@@ -1,0 +1,111 @@
+# Example showing CUSTOM mapping strategy for transformations not supported by JSONATA
+# Use CUSTOM when you need: database lookups, external API calls, complex business logic, encryption, etc.
+
+templatePath: "templates/enrollment-form.pdf"
+
+sections:
+  - sectionName: "enrollment_section"
+    
+    # Use multiple mapping groups: mix DIRECT, JSONPATH, JSONATA, and CUSTOM!
+    fieldMappingGroups:
+      
+      # Group 1: Simple fields with DIRECT (fastest)
+      - mappingType: DIRECT
+        fields:
+          enrollmentDate: "metadata.enrollmentDate"
+          planType: "metadata.planType"
+          effectiveDate: "metadata.effectiveDate"
+      
+      # Group 2: PRIMARY applicant with JSONPATH + basePath optimization
+      - mappingType: JSONPATH
+        basePath: "applicants[type='PRIMARY']"
+        fields:
+          primaryFirstName: "[0].demographic.firstName"
+          primaryLastName: "[0].demographic.lastName"
+          primaryEmail: "[0].demographic.email"
+          primarySSN: "[0].demographic.ssn"
+          primaryDOB: "[0].demographic.dateOfBirth"
+          primaryPhone: "[0].demographic.phone"
+      
+      # Group 3: CUSTOM transformations for PRIMARY applicant
+      - mappingType: CUSTOM
+        fields:
+          # Mix strategies WITHOUT transformation - no function needed!
+          primaryName: "jsonpath:applicants[type='PRIMARY'].demographic.firstName"
+          primaryLastNameDirect: "applicants[0].demographic.lastName"
+          primaryGenderJsonata: "jsonata:applicants[type='PRIMARY'].demographic.gender = 'M' ? 'Male' : 'Female'"
+          
+          # Use DIRECT extraction with transformation (default - array indexing)
+          primaryPhoneFormatted: "formatPhoneUS:applicants[0].demographic.phone"
+          
+          # Use JSONPATH extraction with filter + transformation
+          primaryPhoneFromFilter: "formatPhoneUS:jsonpath:applicants[type='PRIMARY'].demographic.phone"
+          
+          # Calculate age from date of birth (DIRECT)
+          primaryAge: "calculateAge:applicants[0].demographic.dateOfBirth"
+          
+          # Calculate age using JSONPATH filter
+          primaryAgeFromFilter: "calculateAge:jsonpath:applicants[type='PRIMARY'].demographic.dateOfBirth"
+          
+          # Encrypt SSN (base64 encoding - replace with real encryption)
+          primarySSNEncrypted: "encryptSSN:applicants[0].demographic.ssn"
+          
+          # Format DOB to custom format using JSONPATH
+          primaryDOBFormatted: "formatDate:jsonpath:applicants[type='PRIMARY'].demographic.dateOfBirth,MMMM dd yyyy"
+          
+          # Capitalize - uses JSONATA to concatenate FIRST, then capitalize
+          primaryFullName: "capitalize:jsonata:applicants[type='PRIMARY'].demographic.firstName & ' ' & applicants[type='PRIMARY'].demographic.lastName"
+          
+          # Generate random member ID (6 characters)
+          primaryMemberID: "generateRandom:6"
+          
+          # Hash email using JSONPATH
+          primaryEmailHash: "hash:jsonpath:applicants[type='PRIMARY'].demographic.email"
+      
+      # Group 4: SPOUSE with JSONPATH
+      - mappingType: JSONPATH
+        basePath: "applicants[type='SPOUSE']"
+        fields:
+          spouseFirstName: "[0].demographic.firstName"
+          spouseLastName: "[0].demographic.lastName"
+          spouseDOB: "[0].demographic.dateOfBirth"
+          spousePhone: "[0].demographic.phone"
+      
+      # Group 5: CUSTOM transformations for SPOUSE
+      - mappingType: CUSTOM
+        fields:
+          # Format spouse phone
+          spousePhoneFormatted: "formatPhoneUS:applicants[1].demographic.phone"
+          
+          # Calculate spouse age
+          spouseAge: "calculateAge:applicants[1].demographic.dateOfBirth"
+          
+          # Calculate days between primary and spouse DOB
+          ageDifference: "calculateDays:applicants[0].demographic.dateOfBirth,applicants[1].demographic.dateOfBirth"
+      
+      # Group 6: JSONATA for complex expressions and conditionals
+      - mappingType: JSONATA
+        fields:
+          # Count total applicants
+          totalApplicants: "$count(applicants)"
+          
+          # Adult vs Minor status for primary
+          primaryAgeStatus: "applicants[type='PRIMARY'].demographic.dateOfBirth ? (  $number($substringBefore($substringBefore($now(), 'T'), '-')) -   $number($substringBefore(applicants[type='PRIMARY'].demographic.dateOfBirth, '-')) >= 18 ? 'Adult' : 'Minor') : 'Unknown'"
+          
+          # Gender display
+          primaryGender: "applicants[type='PRIMARY'].demographic.gender = 'M' ? 'Male' : applicants[type='PRIMARY'].demographic.gender = 'F' ? 'Female' : 'Other'"
+      
+      # Group 7: More CUSTOM transformations for data quality
+      - mappingType: CUSTOM
+        fields:
+          # Remove spaces from SSN
+          primarySSNNoSpaces: "removeSpaces:applicants[0].demographic.ssn"
+          
+          # Truncate email if too long
+          primaryEmailShort: "truncate:applicants[0].demographic.email,30"
+          
+          # Format enrollment date
+          enrollmentDateFormatted: "formatDate:metadata.enrollmentDate,MM/dd/yyyy"
+          
+          # Format effective date
+          effectiveDateFormatted: "formatDate:metadata.effectiveDate,MMMM dd yyyy"

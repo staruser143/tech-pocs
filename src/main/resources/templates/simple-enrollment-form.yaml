@@ -1,0 +1,13 @@
+templateId: simple-enrollment-form
+sections:
+  - sectionId: applicant-info
+    type: ACROFORM
+    templatePath: templates/forms/applicant-form.pdf
+    order: 1
+    fieldMappings:
+      firstName: $.applicant.firstName
+      lastName: $.applicant.lastName
+      ssn: $.applicant.ssn
+      dateOfBirth: $.applicant.dateOfBirth
+      email: $.applicant.email
+      phone: $.applicant.phone

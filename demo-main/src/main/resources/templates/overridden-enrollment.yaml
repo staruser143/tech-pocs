@@ -1,0 +1,10 @@
+templateId: overridden-enrollment
+baseTemplateId: base-enrollment
+sections:
+  - sectionId: applicant-info
+    fieldMappingGroups:
+      - mappingType: JSONATA
+        fields:
+          primaryFirstName: "'OVERRIDDEN: ' & application.primaryFirstName"
+          primaryLastName: "application.primaryLastName"
+          applicationId: "application.applicationId"

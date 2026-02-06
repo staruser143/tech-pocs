@@ -1,0 +1,49 @@
+templateId: advanced-jsonata-example
+sections:
+  - sectionId: invoice-summary
+    type: ACROFORM
+    order: 1
+    templatePath: templates/forms/invoice-form.pdf
+    
+    # JSONATA mapping strategy for advanced transformations
+    mappingType: JSONATA
+    
+    fieldMappings:
+      # String concatenation
+      customerFullName: customer.firstName & ' ' & customer.lastName
+      
+      # Conditional logic
+      customerType: customer.isPremium ? 'Premium' : 'Standard'
+      
+      # Array aggregation - sum of all item totals
+      subtotal: "$sum(items.(price * quantity))"
+      
+      # Calculations with tax
+      taxAmount: "$sum(items.(price * quantity)) * 0.08"
+      grandTotal: "$sum(items.(price * quantity)) * 1.08"
+      
+      # Count items
+      itemCount: "$count(items)"
+      
+      # Average item price
+      avgItemPrice: "$average(items.price)"
+      
+      # Max and min
+      highestPrice: "$max(items.price)"
+      lowestPrice: "$min(items.price)"
+      
+      # Date formatting (if orderDate is timestamp in milliseconds)
+      formattedDate: "$fromMillis(orderDate, '[M01]/[D01]/[Y0001]')"
+      
+      # String operations
+      customerInitials: "$uppercase($substring(customer.firstName, 0, 1) & $substring(customer.lastName, 0, 1))"
+      
+      # Filter and join - items over $50
+      expensiveItems: "$join(items[price > 50].name, ', ')"
+      
+      # First and last items
+      firstItemName: items[0].name
+      lastItemName: items[-1].name
+      
+      # Conditional formatting
+      discountMessage: discount > 0 ? 'Discount Applied: $' & $string(discount) : 'No Discount'

@@ -1,0 +1,7 @@
+templateId: medical-fragment
+sections:
+  - sectionId: medical-benefits
+    type: FREEMARKER
+    templatePath: templates/medical-benefits.ftl
+    order: 20
+    condition: "$.application.productType == 'MEDICAL'"

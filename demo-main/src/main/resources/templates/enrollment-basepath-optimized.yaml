@@ -1,0 +1,75 @@
+sections:
+  - sectionId: enrollment-form
+    type: ACROFORM
+    templatePath: templates/forms/applicant-form.pdf
+    
+    # PERFORMANCE-OPTIMIZED with basePath feature!
+    # Each filter (applicants[type='PRIMARY']) executes ONCE per group, not per field
+    fieldMappingGroups:
+      
+      # Group 1: Simple fields (no filtering needed)
+      - mappingType: DIRECT
+        fields:
+          applicationId: application.applicationId
+          applicationDate: application.applicationDate
+          applicationStatus: application.status
+      
+      # Group 2: PRIMARY applicant - filter ONCE, map 13 fields
+      # WITHOUT basePath: filter runs 13 times
+      # WITH basePath: filter runs 1 time → 13x faster!
+      - mappingType: JSONPATH
+        basePath: "application.applicants[type='PRIMARY']"
+        fields:
+          # Demographics (paths relative to PRIMARY applicant)
+          primaryFirstName: "demographic.firstName"
+          primaryLastName: "demographic.lastName"
+          primaryMiddleName: "demographic.middleName"
+          primaryDOB: "demographic.dateOfBirth"
+          primaryGender: "demographic.gender"
+          primarySSN: "demographic.ssn"
+          primaryEmail: "demographic.email"
+          primaryPhone: "demographic.phone"
+          
+          # Home Address (nested filter within PRIMARY context)
+          primaryHomeStreet: "demographic.addresses[type='HOME'].street"
+          primaryHomeCity: "demographic.addresses[type='HOME'].city"
+          primaryHomeState: "demographic.addresses[type='HOME'].state"
+          primaryHomeZip: "demographic.addresses[type='HOME'].zipCode"
+          
+          # Billing Address
+          primaryBillingStreet: "demographic.addresses[type='BILLING'].street"
+          primaryBillingCity: "demographic.addresses[type='BILLING'].city"
+          primaryBillingState: "demographic.addresses[type='BILLING'].state"
+          primaryBillingZip: "demographic.addresses[type='BILLING'].zipCode"
+      
+      # Group 3: SPOUSE applicant - filter ONCE, map 8 fields
+      - mappingType: JSONPATH
+        basePath: "application.applicants[type='SPOUSE']"
+        fields:
+          spouseFirstName: "demographic.firstName"
+          spouseLastName: "demographic.lastName"
+          spouseDOB: "demographic.dateOfBirth"
+          spouseGender: "demographic.gender"
+          spouseSSN: "demographic.ssn"
+          spouseHomeStreet: "demographic.addresses[type='HOME'].street"
+          spouseHomeCity: "demographic.addresses[type='HOME'].city"
+          spouseHomeState: "demographic.addresses[type='HOME'].state"
+      
+      # Group 4: ALL CHILDREN - filter ONCE, then access by index
+      # This is THE most efficient: filter runs 1 time for all 12 child fields!
+      # Clean syntax: [0], [1], [2] instead of $[0], $[1], $[2]
+      - mappingType: JSONPATH
+        basePath: "application.applicants[type='CHILD']"
+        fields:
+          child1FirstName: "[0].demographic.firstName"
+          child1LastName: "[0].demographic.lastName"
+          child1DOB: "[0].demographic.dateOfBirth"
+          child1Gender: "[0].demographic.gender"
+          child2FirstName: "[1].demographic.firstName"
+          child2LastName: "[1].demographic.lastName"
+          child2DOB: "[1].demographic.dateOfBirth"
+          child2Gender: "[1].demographic.gender"
+          child3FirstName: "[2].demographic.firstName"
+          child3LastName: "[2].demographic.lastName"
+          child3DOB: "[2].demographic.dateOfBirth"
+          child3Gender: "[2].demographic.gender"

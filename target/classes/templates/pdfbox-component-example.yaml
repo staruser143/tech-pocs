@@ -1,0 +1,10 @@
+templateId: pdfbox-component-example
+sections:
+  - sectionId: header-section
+    type: PDFBOX_COMPONENT
+    templatePath: simpleTextComponent
+    order: 1
+  - sectionId: body-section
+    type: FREEMARKER
+    templatePath: templates/invoice.ftl
+    order: 2

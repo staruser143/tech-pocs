@@ -1,0 +1,19 @@
+templateId: direct-mapping-example
+sections:
+  - sectionId: applicant-info
+    type: ACROFORM
+    order: 1
+    templatePath: templates/forms/applicant-form.pdf
+    
+    # DIRECT mapping strategy - uses simple dot notation
+    mappingType: DIRECT
+    
+    # Field mappings use dot notation for nested access
+    # Format: "property.nestedProperty" or "array.0.property"
+    fieldMappings:
+      firstName: applicant.firstName
+      lastName: applicant.lastName
+      ssn: applicant.ssn
+      dateOfBirth: applicant.dateOfBirth
+      email: applicant.contact.email
+      phone: applicant.contact.phone
